@@ -1,5 +1,7 @@
 # Spottydl
 
+There are a few small changes i made, but I don't remember.  Use at your own risk.
+
 A **NodeJS Spotify Downloader** package without any API Keys or authentication from Spotify or Youtube-Music.
 
 However, this **requires [ffmpeg](https://ffmpeg.org/download.html)** to be installed on your system...
