@@ -3,6 +3,7 @@ import NodeID3 from 'node-id3'
 import ytdl from 'ytdl-core'
 import ffmpeg from 'fluent-ffmpeg'
 import axios from 'axios'
+<<<<<<< HEAD
 import { unlinkSync, existsSync } from 'fs'
 
 // Private Methods
@@ -31,6 +32,29 @@ const dl_track = async (id: string, filename: string): Promise<boolean> => {
 const dl_album_normal = async (obj: Album, oPath: string, tags: any, callback: any = ()=>{}): Promise<Results[]> => {
     let Results: any = []
     console.log("Normal downloading")
+=======
+import { unlinkSync } from 'fs'
+
+// Private Methods
+const dl_track = async (id: string, filename: string): Promise<boolean> => {
+    return await new Promise<boolean>((resolve, reject) => {
+        ffmpeg(ytdl(id, { quality: 'highestaudio', filter: 'audioonly' }))
+            .audioBitrate(128)
+            .save(filename)
+            .on('error', (err: any) => {
+                console.error(`Failed to write file (${filename}): ${err}`)
+                unlinkSync(filename)
+                resolve(false)
+            })
+            .on('end', () => {
+                resolve(true)
+            })
+    })
+}
+
+const dl_album_normal = async (obj: Album, oPath: string, tags: any): Promise<Results[]> => {
+    let Results: any = []
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
     for await (let res of obj.tracks) {
         let sanitizedTitle: string = res.title.replace(/[/\\]/g, ' ')
         let filename = `${oPath}${sanitizedTitle}.mp3`
@@ -38,16 +62,25 @@ const dl_album_normal = async (obj: Album, oPath: string, tags: any, callback: a
         if (dlt) {
             let tagStatus = NodeID3.update(tags, filename)
             if (tagStatus) {
+<<<<<<< HEAD
                 callback({ success: true, filename: filename, name: res.title});
                 console.log(`Finished: ${filename}`)
                 Results.push({ status: 'Success', filename: filename })
             } else {
                 if(callback) callback({ success: false, reason: "tags", filename: filename, name: res.title})
+=======
+                console.log(`Finished: ${filename}`)
+                Results.push({ status: 'Success', filename: filename })
+            } else {
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
                 console.log(`Failed: ${filename} (tags)`)
                 Results.push({ status: 'Failed (tags)', filename: filename, tags: tags })
             }
         } else {
+<<<<<<< HEAD
             if(callback) callback({ success: false, reason: "stream", filename: filename, name: res.title})
+=======
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
             console.log(`Failed: ${filename} (stream)`)
             Results.push({ status: 'Failed (stream)', filename: filename, id: res.id, tags: tags })
         }
@@ -55,11 +88,18 @@ const dl_album_normal = async (obj: Album, oPath: string, tags: any, callback: a
     return Results
 }
 
+<<<<<<< HEAD
 const dl_album_fast = async (obj: Album, oPath: string, tags: any, callback?: any): Promise<Results[]> => {
     let Results: any = []
     let i: number = 0 // Variable for specifying the index of the loop
     return await new Promise<Results[]>(async (resolve, reject) => {
         console.log("Fast downloading")
+=======
+const dl_album_fast = async (obj: Album, oPath: string, tags: any): Promise<Results[]> => {
+    let Results: any = []
+    let i: number = 0 // Variable for specifying the index of the loop
+    return await new Promise<Results[]>(async (resolve, reject) => {
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
         for await (let res of obj.tracks) {
             let sanitizedTitle: string = res.title.replace(/[/\\]/g, ' ')
             let filename = `${oPath}${sanitizedTitle}.mp3`
@@ -67,9 +107,14 @@ const dl_album_fast = async (obj: Album, oPath: string, tags: any, callback?: an
                 .audioBitrate(128)
                 .save(filename)
                 .on('error', (err: any) => {
+<<<<<<< HEAD
                     tags.title = res.title // Tags
                     tags.trackNumber = res.trackNumber
                     if(callback) callback({ success: false, reason: "stream", filename: filename, name: res.title})
+=======
+                    tags.title = res.name // Tags
+                    tags.trackNumber = res.trackNumber
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
                     Results.push({ status: 'Failed (stream)', filename: filename, id: res.id, tags: tags })
                     console.error(`Failed to write file (${filename}): ${err}`)
                     unlinkSync(filename)
@@ -77,6 +122,7 @@ const dl_album_fast = async (obj: Album, oPath: string, tags: any, callback?: an
                 })
                 .on('end', () => {
                     i++
+<<<<<<< HEAD
                     tags.title = res.title
                     tags.trackNumber = res.trackNumber
                     let tagStatus = NodeID3.update(tags, filename)
@@ -86,6 +132,15 @@ const dl_album_fast = async (obj: Album, oPath: string, tags: any, callback?: an
                         Results.push({ status: 'Success', filename: filename })
                     } else {
                         if(callback) callback({ success: false, reason: "tags", filename: filename, name: res.title})
+=======
+                    tags.title = res.name
+                    tags.trackNumber = res.trackNumber
+                    let tagStatus = NodeID3.update(tags, filename)
+                    if (tagStatus) {
+                        console.log(`Finished: ${filename}`)
+                        Results.push({ status: 'Success', filename: filename })
+                    } else {
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
                         console.log(`Failed to add tags: ${filename}`)
                         Results.push({ status: 'Failed (tags)', filename: filename, id: res.id, tags: tags })
                     }
@@ -153,8 +208,12 @@ export const downloadTrack = async (obj: Track, outputPath: string = './'): Prom
 export const downloadAlbum = async (
     obj: Album,
     outputPath: string = './',
+<<<<<<< HEAD
     sync: boolean = true,
     callback: any = ()=>{}
+=======
+    sync: boolean = true
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
 ): Promise<Results[] | string> => {
     try {
         if (checkType(obj) != 'Album') {
@@ -171,9 +230,15 @@ export const downloadAlbum = async (
         }
         let oPath = checkPath(outputPath)
         if (sync) {
+<<<<<<< HEAD
             return await dl_album_normal(obj, oPath, tags, callback)
         } else {
             return await dl_album_fast(obj, oPath, tags, callback)
+=======
+            return await dl_album_normal(obj, oPath, tags)
+        } else {
+            return await dl_album_fast(obj, oPath, tags)
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
         }
     } catch (err: any) {
         return `Caught: ${err}`
@@ -187,7 +252,11 @@ export const downloadAlbum = async (
  * @param {string} outputPath - String type, (optional) if not specified the output will be on the current dir
  * @returns {Results[]} <Results[]> if successful, `string` if failed
  */
+<<<<<<< HEAD
 export const downloadPlaylist = async (obj: Playlist, outputPath: string = './', callback?: any): Promise<Results[] | string> => {
+=======
+export const downloadPlaylist = async (obj: Playlist, outputPath: string = './'): Promise<Results[] | string> => {
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
     try {
         let Results: any = []
         if (checkType(obj) != 'Playlist') {
@@ -213,16 +282,25 @@ export const downloadPlaylist = async (obj: Playlist, outputPath: string = './',
             if (dlt) {
                 let tagStatus = NodeID3.update(tags, filename)
                 if (tagStatus) {
+<<<<<<< HEAD
                     if(callback) callback({ success: true, filename: filename, name: res.title})
                     console.log(`Finished: ${filename}`)
                     Results.push({ status: 'Success', filename: filename })
                 } else {
                     if(callback) callback({ success: false, reason: "tags", filename: filename, name: res.title})
+=======
+                    console.log(`Finished: ${filename}`)
+                    Results.push({ status: 'Success', filename: filename })
+                } else {
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
                     console.log(`Failed: ${filename} (tags)`)
                     Results.push({ status: 'Failed (tags)', filename: filename, tags: tags })
                 }
             } else {
+<<<<<<< HEAD
                 if(callback) callback({ success: false, reason: "stream", filename: filename, name: res.title})
+=======
+>>>>>>> 6f43740014c118ea5121b4f2e6e25041d99e652f
                 console.log(`Failed: ${filename} (stream)`)
                 Results.push({ status: 'Failed (stream)', filename: filename, id: res.id, tags: tags })
             }
