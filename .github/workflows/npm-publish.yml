@@ -1,0 +1,27 @@
+name: "Publish To NPM"
+
+on:
+    push:
+      branches:
+        - main
+
+jobs:
+    release:
+        name: release
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4.1.1
+            - name: Setup Node.js environment
+              uses: actions/setup-node@v4.0.0
+              with:
+                  node-version: 18
+                  registry-url: https://registry.npmjs.org
+            - name: Install dependencies
+              run: npm install
+            - name: Build
+              run: npm run build
+            - name: Publish to NPM
+              run: npm publish --access public
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}

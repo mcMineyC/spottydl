@@ -1,0 +1,46 @@
+{
+  "name": "spottydl-better",
+  "version": "0.3.121",
+  "description": "NodeJS Spotify Downloader without any API Keys or Authentication",
+  "main": "dist/index.js",
+  "typings": "types/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf types/ dist/ docs/",
+    "upgradeDependencies": "yarn upgrade-interactive --latest",
+    "build": "tsc -p .",
+    "watch": "tsc -w",
+    "format": "prettier --config .prettierrc 'src/*.ts' --write",
+    "docs": "typedoc src/index.ts"
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "keywords": [
+    "spotify",
+    "download",
+    "spotifydl",
+    "spotify-dl",
+    "music"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mcMineyC/spottydl.git"
+  },
+  "author": "mcmineyc",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "fluent-ffmpeg": "^2.1.2",
+    "node-id3": "^0.2.6",
+    "ytdl-core": "^4.11.5",
+    "ytmusic-api": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/node": "^20.11.17",
+    "prettier": "^3.2.5",
+    "typedoc": "^0.25.8",
+    "typescript": "^5.3.3"
+  }
+}
